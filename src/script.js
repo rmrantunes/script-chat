@@ -12,3 +12,4 @@ const scriptChat = new ScriptChat({
 })
 
 console.log('hello')
+scriptChat.init()
