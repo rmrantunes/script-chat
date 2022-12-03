@@ -1,6 +1,21 @@
 export class ScriptChat {
     // values: Values
     constructor(config) {
+        this.handleNextStep = () => {
+            var _a;
+            const value = (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value;
+            console.log(this.textFieldElement);
+            if (!value)
+                return;
+            this.renderUserMessage(value);
+            // this.values[this.currentStep.id] = [value]
+            const nextStep = this.setStep(this.currentStep.next);
+            this.renderOwnerMessage(nextStep.message);
+            if (nextStep.id === 'end') {
+                // remove all options inputs and button
+                this.hideTextField();
+            }
+        };
         this.containter = document.querySelector('#script-chat-container');
         this.stepsContainter = document.querySelector('#script-chat-messages-container');
         this.textFieldElement = document.querySelector('#script-chat-textfield');
@@ -44,17 +59,6 @@ export class ScriptChat {
     hideTextField() {
         var _a;
         (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-hidden', 'true');
-    }
-    handleNextStep() {
-        var _a;
-        const value = (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value;
-        console.log(this.textFieldElement);
-        if (!value)
-            return;
-        this.renderUserMessage(value);
-        // this.values[this.currentStep.id] = [value]
-        const nextStep = this.setStep(this.currentStep.next);
-        this.renderUserMessage(nextStep.message);
     }
     init() {
         var _a;

@@ -83,7 +83,7 @@ export class ScriptChat {
     this.textFieldElement?.setAttribute('aria-hidden', 'true')
   }
 
-  handleNextStep() {
+  handleNextStep = () => {
     const value = this.textFieldElement?.value
 
     console.log(this.textFieldElement)
@@ -93,7 +93,12 @@ export class ScriptChat {
     // this.values[this.currentStep.id] = [value]
 
     const nextStep = this.setStep(this.currentStep.next)
-    this.renderUserMessage(nextStep.message)
+    this.renderOwnerMessage(nextStep.message)
+
+    if (nextStep.id === 'end') {
+      // remove all options inputs and button
+      this.hideTextField()
+    }
   }
 
   init() {
