@@ -2,7 +2,7 @@
 
 A simple code for defining scripted chat using Javascript
 
-## Installation
+### Installation
 
 ```
 yarn add scripted-chat
@@ -14,9 +14,18 @@ or
 npm i scripted-chat
 ```
 
-## Step
+## Get Started
 
-Required steps: `start` and `end`
+```ts
+import { ScriptedChatState } from 'scripted-chat'
+
+const scriptState = new ScriptedChatState(config)
+```
+
+Before moving on to the `config` object and the other `ScriptedChatState` methods, learn the basics.
+
+### Step
+
 
 ```ts
 const step = {
@@ -34,7 +43,7 @@ const step = {
 - `input`: input types
   - `text`, `email`, `number`, `date`
 
-## Script
+### Script
 
 Is the combination of steps
 
@@ -61,7 +70,9 @@ const script = [
 ]
 ```
 
-## Variables
+## Advanced
+
+### Variables
 
 You can interpolate user input values inside next step messages using `{{step_id}}`
 
@@ -88,9 +99,9 @@ const script = [
 ]
 ```
 
-## Hooks
+### Hooks
 
-### `beforeStepChange`
+#### `beforeStepChange`
 
 Use this hook to validade a user input returning a boolean.
 If there's no checking, just return `true`.
@@ -122,11 +133,11 @@ const script = [
 ]
 ```
 
-### `afterStepChange`
+#### `afterStepChange`
 
 You can't validate using this hook, but you still can keep track on step change.
 
-### HookEvent object
+#### HookEvent object
 
 ```ts
 type HookEvent = {
