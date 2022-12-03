@@ -85,6 +85,21 @@ const scriptState = new ScriptedChatState({
 })
 ```
 
+### Script state
+
+- `currentStep`: current step object
+- `script`: array of steps
+- `results`: an array containing previous results
+
+- `getStep: (id: string) => Step`: get a certain step by id
+- `getNextStep: () => Step`: get the next step object
+- `setStep: (id: string) => Step`: set a new `currentStep`
+- `replaceMessageValuesVariables(message: string): string
+`: replace message variables with previous results values. 
+(See more about variables on Advanced section)
+- `goToNextStep: (currentStepValues: any[]) => Promise<void>`: pass an array of values to proceed with your script
+- `reset:() => void`: reset `results` and `currentStep`
+
 ## Advanced
 
 ### Variables
