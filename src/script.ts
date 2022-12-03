@@ -11,7 +11,7 @@ export class ScriptedChatJS extends ScriptedChatState {
   constructor(config: ScriptedChatJSConfig) {
     super({
       ...config,
-      onNewOwnerMessage: (message) => {
+      onNewStepMessage: (message) => {
         this.#renderOwnerMessage(message)
       },
       onNewUserMessage: (values) => {

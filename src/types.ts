@@ -50,7 +50,7 @@ export type ScriptedChatJSConfig = {
 export type ScriptedChatStateConfig = {
   script: Step[]
 
-  onNewOwnerMessage?: (message: string) => void
+  onNewStepMessage?: (message: string) => void
   onNewUserMessage?: (values: string[]) => void
 
   onEnd?: VoidFunction

@@ -71,7 +71,7 @@ export class ScriptedChatState {
     this.setStep(this.currentStep.next)
 
     const message = this.replaceMessageValuesVariables(nextStep.message)
-    this.config.onNewOwnerMessage?.(message)
+    this.config.onNewStepMessage?.(message)
 
     const isEndStep = nextStep.id === 'end'
 
