@@ -15,6 +15,13 @@ type Step = {
   next: StepName | string
   input: TextFieldTypes
   message: string
+
+  /** Step-level `beforeStepChange` overrides the global one
+   * - Use this hook to validade a user input. So you need to return a boolean.
+   * If there's no checking, just return `true`.
+   */
+  beforeStepChange?: (event: HookEvent) => boolean
+  afterStepChange?: (event: HookEvent) => void
 }
 
 type Result = {
@@ -25,6 +32,10 @@ type Result = {
 type ScriptChatConfig = {
   script: Step[]
 
+  /**
+   * - Use this hook to validade a user input. So you need to return a boolean.
+   * If there's no checking, just return `true`.
+   */
   beforeStepChange?: (event: HookEvent) => boolean
   afterStepChange?: (event: HookEvent) => void
 }
@@ -130,19 +141,23 @@ export class ScriptChat {
 
     let validation = true
 
-    if (this.config.beforeStepChange) {
-      validation = this.config.beforeStepChange?.({
+    if (this.currentStep.beforeStepChange || this.config.beforeStepChange) {
+      const beforeStepChangeEvent = {
         result,
         currentStep: this.currentStep,
         nextStep,
         results: this.results,
-      })
+      }
+      const hook =
+        this.currentStep.beforeStepChange || this.config.beforeStepChange
+      validation = hook!(beforeStepChangeEvent)
     }
 
     if (!validation || !values.length) return
 
     this.results.push(result)
     this.renderUserMessage(values.join(', '))
+    const currentAfterStepChange = this.currentStep.afterStepChange
     this.setStep(this.currentStep.next)
 
     const message = this.#replaceMessageValuesVariables(nextStep.message)
@@ -155,12 +170,15 @@ export class ScriptChat {
       this.hideTextField()
     }
 
-    this.config.afterStepChange?.({
+    const afterStepChangeEvent = {
       result,
       results: this.results,
       currentStep: nextStep,
       nextStep: isEndStep ? null : this.getStep(nextStep.next),
-    })
+    }
+
+    this.config.afterStepChange?.(afterStepChangeEvent)
+    currentAfterStepChange?.(afterStepChangeEvent)
   }
 
   init() {
