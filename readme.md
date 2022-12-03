@@ -2,6 +2,18 @@
 
 A simple code for defining scripted chat using Javascript
 
+## Installation
+
+```
+yarn add script-chat
+```
+
+or
+
+```
+npm i script-chat
+```
+
 ## Step
 
 Required steps: `start` and `end`
@@ -18,7 +30,7 @@ const step = {
 - `id`: step identifier
 - `message`: message defined for user interaction
 - `next`: next step id.
-  - `REQUIRED`: `start` and `end`
+  - Required: `start` and `end`
 - `input`: input types
   - `text`, `email`, `number`, `date`
 
@@ -113,3 +125,19 @@ const script = [
 ### `afterStepChange`
 
 You can't validate using this hook, but you still can keep track on step change.
+
+### HookEvent object
+
+```ts
+type HookEvent = {
+  currentStep: Step
+  nextStep: Step | null
+  result: Result
+  results: Result[]
+}
+
+type Result = {
+  step: string
+  values: (string | undefined)[]
+}
+```
