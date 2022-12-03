@@ -15,7 +15,7 @@ export class ScriptChat {
             return [];
         };
         this.handleNextStep = () => {
-            var _a, _b, _c, _d;
+            var _a, _b;
             const values = this.getUserValues();
             const result = {
                 step: this.currentStep.id,
@@ -23,18 +23,21 @@ export class ScriptChat {
             };
             const nextStep = this.getNextStep();
             let validation = true;
-            if (this.config.beforeStepChange) {
-                validation = (_b = (_a = this.config).beforeStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, {
+            if (this.currentStep.beforeStepChange || this.config.beforeStepChange) {
+                const beforeStepChangeEvent = {
                     result,
                     currentStep: this.currentStep,
                     nextStep,
                     results: this.results,
-                });
+                };
+                const hook = this.currentStep.beforeStepChange || this.config.beforeStepChange;
+                validation = hook(beforeStepChangeEvent);
             }
             if (!validation || !values.length)
                 return;
             this.results.push(result);
             this.renderUserMessage(values.join(', '));
+            const currentAfterStepChange = this.currentStep.afterStepChange;
             this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
             this.renderOwnerMessage(message);
@@ -43,12 +46,14 @@ export class ScriptChat {
                 // remove all options inputs and button
                 this.hideTextField();
             }
-            (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, {
+            const afterStepChangeEvent = {
                 result,
                 results: this.results,
                 currentStep: nextStep,
                 nextStep: isEndStep ? null : this.getStep(nextStep.next),
-            });
+            };
+            (_b = (_a = this.config).afterStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, afterStepChangeEvent);
+            currentAfterStepChange === null || currentAfterStepChange === void 0 ? void 0 : currentAfterStepChange(afterStepChangeEvent);
         };
         this.containter = document.querySelector('#script-chat-container');
         this.stepsContainter = document.querySelector('#script-chat-messages-container');
