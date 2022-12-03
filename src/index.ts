@@ -1,46 +1,4 @@
-type StepName = 'start' | 'end'
-
-type TextFieldTypes = 'text' | 'email' | 'number' | 'date' | 'datetime-local'
-
-type HookEvent = {
-  currentStep: Step
-  nextStep: Step | null
-
-  result: Result
-  results: Result[]
-}
-
-type Step = {
-  id: StepName | string
-  next: StepName | string
-  input: TextFieldTypes
-  message: string
-
-  /** Step-level `beforeStepChange` overrides the global one
-   * - Use this hook to validade a user input. So you need to return a boolean.
-   * If there's no checking, just return `true`.
-   */
-  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
-  afterStepChange?: (event: HookEvent) => void | Promise<void>
-}
-
-type Result = {
-  step: string
-  values: (string | undefined)[]
-}
-
-type ScriptChatConfig = {
-  script: Step[]
-
-  /**
-   * - Use this hook to validade a user input. So you need to return a boolean.
-   * If there's no checking, just return `true`.
-   */
-  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
-  afterStepChange?: (event: HookEvent) => void | Promise<void>
-
-  parentElement?: Element
-}
+import { Result, ScriptChatConfig, Step, TextFieldTypes } from './types'
 
 export class ScriptChat {
   containter: Element | Document
