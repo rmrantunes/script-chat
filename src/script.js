@@ -2,10 +2,15 @@ import { ScriptChat } from './index.js'
 
 const scriptChat = new ScriptChat({
   script: [
-    { id: 'start', next: 'step-1', message: 'Hello my friend', input: 'text' },
+    {
+      id: 'start',
+      next: 'step-1',
+      message: "What's your name?",
+      input: 'text',
+    },
     {
       id: 'step-1',
-      message: 'How are you?',
+      message: 'How are you, {{start}}?',
       next: 'end',
       input: 'text',
     },

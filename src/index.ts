@@ -13,13 +13,13 @@ type Step = {
   beforeStepChange?: () => any
 }
 
-type ScriptChatConfig = {
-  script: Step[]
-}
-
 type Value = {
   step: string
   stepValue: (string | undefined)[]
+}
+
+type ScriptChatConfig = {
+  script: Step[]
 }
 
 export class ScriptChat {
@@ -93,6 +93,16 @@ export class ScriptChat {
     return ['text', 'email', 'number'].includes(this.currentStep.input)
   }
 
+  #replaceMessageValuesVariables(message: string) {
+    let _message = message
+    this.values.forEach((value) => {
+      const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g')
+      _message = _message.replace(regex, value.stepValue.join(', '))
+    })
+
+    return _message
+  }
+
   getUserValues = () => {
     if (this.#isTextField()) {
       return [this.textFieldElement?.value]
@@ -105,14 +115,17 @@ export class ScriptChat {
 
     if (!values.length) return
 
-    this.renderUserMessage(values.join(', '))
     this.values.push({
       step: this.currentStep.id,
       stepValue: values,
     })
 
+    this.renderUserMessage(values.join(', '))
+
     const nextStep = this.setStep(this.currentStep.next)
-    this.renderOwnerMessage(nextStep.message)
+
+    const message = this.#replaceMessageValuesVariables(nextStep.message)
+    this.renderOwnerMessage(message)
 
     if (nextStep.id === 'end') {
       // remove all options inputs and button
@@ -121,7 +134,10 @@ export class ScriptChat {
   }
 
   init() {
-    this.renderOwnerMessage(this.currentStep.message)
+    const message = this.#replaceMessageValuesVariables(
+      this.currentStep.message
+    )
+    this.renderOwnerMessage(message)
     const currentType = this.currentStep.input
     if (this.#isTextField()) {
       this.showTextField(currentType)

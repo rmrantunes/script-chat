@@ -3,7 +3,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _ScriptChat_instances, _ScriptChat_isTextField;
+var _ScriptChat_instances, _ScriptChat_isTextField, _ScriptChat_replaceMessageValuesVariables;
 export class ScriptChat {
     constructor(config) {
         _ScriptChat_instances.add(this);
@@ -18,13 +18,14 @@ export class ScriptChat {
             const values = this.getUserValues();
             if (!values.length)
                 return;
-            this.renderUserMessage(values.join(', '));
             this.values.push({
                 step: this.currentStep.id,
                 stepValue: values,
             });
+            this.renderUserMessage(values.join(', '));
             const nextStep = this.setStep(this.currentStep.next);
-            this.renderOwnerMessage(nextStep.message);
+            const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
+            this.renderOwnerMessage(message);
             if (nextStep.id === 'end') {
                 // remove all options inputs and button
                 this.hideTextField();
@@ -79,7 +80,8 @@ export class ScriptChat {
     }
     init() {
         var _a;
-        this.renderOwnerMessage(this.currentStep.message);
+        const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, this.currentStep.message);
+        this.renderOwnerMessage(message);
         const currentType = this.currentStep.input;
         if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
             this.showTextField(currentType);
@@ -89,4 +91,11 @@ export class ScriptChat {
 }
 _ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField() {
     return ['text', 'email', 'number'].includes(this.currentStep.input);
+}, _ScriptChat_replaceMessageValuesVariables = function _ScriptChat_replaceMessageValuesVariables(message) {
+    let _message = message;
+    this.values.forEach((value) => {
+        const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g');
+        _message = _message.replace(regex, value.stepValue.join(', '));
+    });
+    return _message;
 };
