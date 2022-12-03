@@ -89,7 +89,13 @@ export class ScriptedChatJS extends ScriptedChatState {
     await this.goToNextStep(values)
   }
 
+  #nextStepButtonHandler = (event: Event) => {
+    event.preventDefault()
+    this.#handleNextStep()
+  }
+
   init() {
+    this.setStep('start')
     const message = this.replaceMessageValuesVariables(this.currentStep.message)
     this.#renderOwnerMessage(message)
     const currentType = this.currentStep.input
@@ -98,9 +104,17 @@ export class ScriptedChatJS extends ScriptedChatState {
       this.#showTextField(currentType)
     }
 
-    this.nextStepButtonElement?.addEventListener('click', (event) => {
-      event.preventDefault()
-      this.#handleNextStep()
-    })
+    this.nextStepButtonElement?.addEventListener(
+      'click',
+      this.#nextStepButtonHandler
+    )
+  }
+
+  cleanup() {
+    this.stepsContainter!.innerHTML = ''
+    this.nextStepButtonElement?.removeEventListener(
+      'click',
+      this.#nextStepButtonHandler
+    )
   }
 }

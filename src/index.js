@@ -12,7 +12,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _ScriptedChatJS_instances, _ScriptedChatJS_renderOwnerMessage, _ScriptedChatJS_renderUserMessage, _ScriptedChatJS_hideControl, _ScriptedChatJS_showControl, _ScriptedChatJS_showTextField, _ScriptedChatJS_hideTextField, _ScriptedChatJS_isTextField, _ScriptedChatJS_getUserValues, _ScriptedChatJS_handleNextStep;
+var _ScriptedChatJS_instances, _ScriptedChatJS_renderOwnerMessage, _ScriptedChatJS_renderUserMessage, _ScriptedChatJS_hideControl, _ScriptedChatJS_showControl, _ScriptedChatJS_showTextField, _ScriptedChatJS_hideTextField, _ScriptedChatJS_isTextField, _ScriptedChatJS_getUserValues, _ScriptedChatJS_handleNextStep, _ScriptedChatJS_nextStepButtonHandler;
 import { ScriptedChatState } from './script.js';
 export class ScriptedChatJS extends ScriptedChatState {
     constructor(config) {
@@ -38,6 +38,10 @@ export class ScriptedChatJS extends ScriptedChatState {
             const values = __classPrivateFieldGet(this, _ScriptedChatJS_getUserValues, "f").call(this);
             yield this.goToNextStep(values);
         }));
+        _ScriptedChatJS_nextStepButtonHandler.set(this, (event) => {
+            event.preventDefault();
+            __classPrivateFieldGet(this, _ScriptedChatJS_handleNextStep, "f").call(this);
+        });
         this.containter = config.parentElement || document;
         this.stepsContainter = this.containter.querySelector('.script-chat-messages-container');
         this.textFieldElement = this.containter.querySelector('.script-chat-textfield');
@@ -46,6 +50,7 @@ export class ScriptedChatJS extends ScriptedChatState {
     }
     init() {
         var _a;
+        this.setStep('start');
         const message = this.replaceMessageValuesVariables(this.currentStep.message);
         __classPrivateFieldGet(this, _ScriptedChatJS_instances, "m", _ScriptedChatJS_renderOwnerMessage).call(this, message);
         const currentType = this.currentStep.input;
@@ -53,13 +58,15 @@ export class ScriptedChatJS extends ScriptedChatState {
             __classPrivateFieldGet(this, _ScriptedChatJS_instances, "m", _ScriptedChatJS_showControl).call(this);
             __classPrivateFieldGet(this, _ScriptedChatJS_instances, "m", _ScriptedChatJS_showTextField).call(this, currentType);
         }
-        (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', (event) => {
-            event.preventDefault();
-            __classPrivateFieldGet(this, _ScriptedChatJS_handleNextStep, "f").call(this);
-        });
+        (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', __classPrivateFieldGet(this, _ScriptedChatJS_nextStepButtonHandler, "f"));
+    }
+    cleanup() {
+        var _a;
+        this.stepsContainter.innerHTML = '';
+        (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.removeEventListener('click', __classPrivateFieldGet(this, _ScriptedChatJS_nextStepButtonHandler, "f"));
     }
 }
-_ScriptedChatJS_getUserValues = new WeakMap(), _ScriptedChatJS_handleNextStep = new WeakMap(), _ScriptedChatJS_instances = new WeakSet(), _ScriptedChatJS_renderOwnerMessage = function _ScriptedChatJS_renderOwnerMessage(message) {
+_ScriptedChatJS_getUserValues = new WeakMap(), _ScriptedChatJS_handleNextStep = new WeakMap(), _ScriptedChatJS_nextStepButtonHandler = new WeakMap(), _ScriptedChatJS_instances = new WeakSet(), _ScriptedChatJS_renderOwnerMessage = function _ScriptedChatJS_renderOwnerMessage(message) {
     var _a;
     const messageElement = document.createElement('span');
     messageElement.classList.add('script-chat-owner-message');
