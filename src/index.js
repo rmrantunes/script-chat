@@ -46,6 +46,9 @@ export class ScriptChat {
                 // remove all options inputs and button
                 this.hideTextField();
             }
+            else {
+                __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this, nextStep.input) && this.showTextField(nextStep.input);
+            }
             const afterStepChangeEvent = {
                 result,
                 results: this.results,
@@ -115,8 +118,8 @@ export class ScriptChat {
         (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.handleNextStep);
     }
 }
-_ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField() {
-    return ['text', 'email', 'number'].includes(this.currentStep.input);
+_ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField(input = this.currentStep.input) {
+    return ['text', 'email', 'number', 'date', 'datetime-local'].includes(input);
 }, _ScriptChat_replaceMessageValuesVariables = function _ScriptChat_replaceMessageValuesVariables(message) {
     let _message = message;
     this.results.forEach((result) => {

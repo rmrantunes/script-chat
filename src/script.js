@@ -22,8 +22,14 @@ const scriptChat = new ScriptChat({
     {
       id: 'step-1',
       message: 'How are you, {{start}}?',
-      next: 'end',
+      next: 'step-2',
       input: 'text',
+    },
+    {
+      id: 'step-2',
+      message: "What's your birhday?",
+      next: 'end',
+      input: 'datetime-local',
     },
     {
       id: 'end',

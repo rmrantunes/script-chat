@@ -1,6 +1,6 @@
 type StepName = 'start' | 'end'
 
-type TextFieldTypes = 'text' | 'email' | 'number'
+type TextFieldTypes = 'text' | 'email' | 'number' | 'date' | 'datetime-local'
 
 type HookEvent = {
   currentStep: Step
@@ -110,8 +110,8 @@ export class ScriptChat {
     this.textFieldElement?.setAttribute('disabled', 'true')
   }
 
-  #isTextField() {
-    return ['text', 'email', 'number'].includes(this.currentStep.input)
+  #isTextField(input = this.currentStep.input) {
+    return ['text', 'email', 'number', 'date', 'datetime-local'].includes(input)
   }
 
   #replaceMessageValuesVariables(message: string) {
@@ -168,6 +168,8 @@ export class ScriptChat {
     if (isEndStep) {
       // remove all options inputs and button
       this.hideTextField()
+    } else {
+      this.#isTextField(nextStep.input) && this.showTextField(nextStep.input)
     }
 
     const afterStepChangeEvent = {
