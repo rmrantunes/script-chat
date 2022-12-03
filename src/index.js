@@ -17,19 +17,22 @@ export class ScriptChat {
         this.handleNextStep = () => {
             var _a, _b, _c, _d;
             const values = this.getUserValues();
-            const newValues = {
+            const result = {
                 step: this.currentStep.id,
                 stepValues: values,
             };
             const nextStep = this.getNextStep();
             let validation = true;
-            const hookEvent = Object.assign(Object.assign({}, newValues), { currentStep: this.currentStep, nextStep });
             if (this.config.beforeStepChange) {
-                validation = (_b = (_a = this.config).beforeStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, hookEvent);
+                validation = (_b = (_a = this.config).beforeStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, {
+                    result,
+                    currentStep: this.currentStep,
+                    nextStep,
+                });
             }
             if (!validation || !values.length)
                 return;
-            this.values.push(newValues);
+            this.values.push(result);
             this.renderUserMessage(values.join(', '));
             this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
@@ -38,7 +41,11 @@ export class ScriptChat {
                 // remove all options inputs and button
                 this.hideTextField();
             }
-            (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, hookEvent);
+            (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, {
+                result,
+                currentStep: nextStep,
+                nextStep: this.getStep(nextStep.next),
+            });
         };
         this.containter = document.querySelector('#script-chat-container');
         this.stepsContainter = document.querySelector('#script-chat-messages-container');

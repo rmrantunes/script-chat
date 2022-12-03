@@ -2,9 +2,11 @@ type StepName = 'start' | 'end'
 
 type TextFieldTypes = 'text' | 'email' | 'number'
 
-type HookEvent = Value & {
+type HookEvent = {
   currentStep: Step
   nextStep: Step
+
+  result: Value
 }
 
 type Step = {
@@ -119,26 +121,25 @@ export class ScriptChat {
 
   handleNextStep = () => {
     const values = this.getUserValues()
-    const newValues = {
+    const result = {
       step: this.currentStep.id,
       stepValues: values,
     }
     const nextStep = this.getNextStep()
 
     let validation = true
-    const hookEvent = {
-      ...newValues,
-      currentStep: this.currentStep,
-      nextStep,
-    }
 
     if (this.config.beforeStepChange) {
-      validation = this.config.beforeStepChange?.(hookEvent)
+      validation = this.config.beforeStepChange?.({
+        result,
+        currentStep: this.currentStep,
+        nextStep,
+      })
     }
 
     if (!validation || !values.length) return
 
-    this.values.push(newValues)
+    this.values.push(result)
     this.renderUserMessage(values.join(', '))
     this.setStep(this.currentStep.next)
 
@@ -150,7 +151,11 @@ export class ScriptChat {
       this.hideTextField()
     }
 
-    this.config.afterStepChange?.(hookEvent)
+    this.config.afterStepChange?.({
+      result,
+      currentStep: nextStep,
+      nextStep: this.getStep(nextStep.next),
+    })
   }
 
   init() {
