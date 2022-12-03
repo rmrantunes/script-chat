@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
@@ -14,7 +23,7 @@ export class ScriptChat {
             }
             return [];
         };
-        this.handleNextStep = () => {
+        this.handleNextStep = () => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
             const values = this.getUserValues();
             const result = {
@@ -31,7 +40,7 @@ export class ScriptChat {
                     results: this.results,
                 };
                 const hook = this.currentStep.beforeStepChange || this.config.beforeStepChange;
-                validation = hook(beforeStepChangeEvent);
+                validation = yield hook(beforeStepChangeEvent);
             }
             if (!validation || !values.length)
                 return;
@@ -55,9 +64,9 @@ export class ScriptChat {
                 currentStep: nextStep,
                 nextStep: isEndStep ? null : this.getStep(nextStep.next),
             };
-            (_b = (_a = this.config).afterStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, afterStepChangeEvent);
-            currentAfterStepChange === null || currentAfterStepChange === void 0 ? void 0 : currentAfterStepChange(afterStepChangeEvent);
-        };
+            yield ((_b = (_a = this.config).afterStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, afterStepChangeEvent));
+            yield (currentAfterStepChange === null || currentAfterStepChange === void 0 ? void 0 : currentAfterStepChange(afterStepChangeEvent));
+        });
         this.containter = document.querySelector('#script-chat-container');
         this.stepsContainter = document.querySelector('#script-chat-messages-container');
         this.textFieldElement = document.querySelector('#script-chat-textfield');
@@ -122,6 +131,7 @@ _ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _Scrip
     return ['text', 'email', 'number', 'date', 'datetime-local'].includes(input);
 }, _ScriptChat_replaceMessageValuesVariables = function _ScriptChat_replaceMessageValuesVariables(message) {
     let _message = message;
+    // Next implementation: {{start.2}} for multiple choice variables
     this.results.forEach((result) => {
         const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g');
         _message = _message.replace(regex, result.values.join(', '));

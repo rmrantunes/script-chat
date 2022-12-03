@@ -15,6 +15,9 @@ const scriptChat = new ScriptChat({
       next: 'step-1',
       message: "What's your name?",
       input: 'text',
+      beforeStepChange: async (event) => {
+        return true
+      },
       afterStepChange: (input) => {
         console.log('after:step', input)
       },

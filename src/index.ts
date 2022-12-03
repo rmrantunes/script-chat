@@ -20,8 +20,8 @@ type Step = {
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
    */
-  beforeStepChange?: (event: HookEvent) => boolean
-  afterStepChange?: (event: HookEvent) => void
+  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
+  afterStepChange?: (event: HookEvent) => void | Promise<void>
 }
 
 type Result = {
@@ -36,8 +36,8 @@ type ScriptChatConfig = {
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
    */
-  beforeStepChange?: (event: HookEvent) => boolean
-  afterStepChange?: (event: HookEvent) => void
+  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
+  afterStepChange?: (event: HookEvent) => void | Promise<void>
 }
 
 export class ScriptChat {
@@ -116,6 +116,7 @@ export class ScriptChat {
 
   #replaceMessageValuesVariables(message: string) {
     let _message = message
+    // Next implementation: {{start.2}} for multiple choice variables
     this.results.forEach((result) => {
       const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g')
       _message = _message.replace(regex, result.values.join(', '))
@@ -131,7 +132,7 @@ export class ScriptChat {
     return []
   }
 
-  handleNextStep = () => {
+  handleNextStep = async () => {
     const values = this.getUserValues()
     const result = {
       step: this.currentStep.id,
@@ -150,7 +151,7 @@ export class ScriptChat {
       }
       const hook =
         this.currentStep.beforeStepChange || this.config.beforeStepChange
-      validation = hook!(beforeStepChangeEvent)
+      validation = await hook!(beforeStepChangeEvent)
     }
 
     if (!validation || !values.length) return
@@ -179,8 +180,8 @@ export class ScriptChat {
       nextStep: isEndStep ? null : this.getStep(nextStep.next),
     }
 
-    this.config.afterStepChange?.(afterStepChangeEvent)
-    currentAfterStepChange?.(afterStepChangeEvent)
+    await this.config.afterStepChange?.(afterStepChangeEvent)
+    await currentAfterStepChange?.(afterStepChangeEvent)
   }
 
   init() {
