@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A simple code for defining scripted chat using Javascript",
   "main": "dist/index.js",
-  "types": "types",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
