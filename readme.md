@@ -2,7 +2,7 @@
 
 A simple code for defining scripted chat using Javascript
 
-### Installation
+## Installation
 
 ```
 yarn add scripted-chat
@@ -22,10 +22,9 @@ import { ScriptedChatState } from 'scripted-chat'
 const scriptState = new ScriptedChatState(config)
 ```
 
-Before moving on to the `config` object and the other `ScriptedChatState` methods, learn the basics.
+Before moving on to the `config` object and the other `ScriptedChatState` methods, learn the basics of `Step` and `Script`.
 
 ### Step
-
 
 ```ts
 const step = {
@@ -68,6 +67,22 @@ const script = [
     input: '',
   },
 ]
+```
+
+### Basic config
+
+The most important basic thing about the `config` is defining the chat steps. You can see other `methods` later down.
+
+```ts
+import { ScriptedChatState } from 'scripted-chat'
+
+const script = [
+  /** steps */
+]
+
+const scriptState = new ScriptedChatState({
+  script,
+})
 ```
 
 ## Advanced
