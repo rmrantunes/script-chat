@@ -12,10 +12,10 @@ export class ScriptedChatJS extends ScriptedChatState {
     super({
       ...config,
       onNewOwnerMessage: (message) => {
-        this.renderOwnerMessage(message)
+        this.#renderOwnerMessage(message)
       },
       onNewUserMessage: (values) => {
-        this.renderUserMessage(values.join(', '))
+        this.#renderUserMessage(values.join(', '))
       },
       onEnd: () => {
         this.#hideControl()
@@ -38,7 +38,7 @@ export class ScriptedChatJS extends ScriptedChatState {
     this.controlElement = this.containter.querySelector('.script-chat-control')
   }
 
-  renderOwnerMessage(message: string) {
+  #renderOwnerMessage(message: string) {
     const messageElement = document.createElement('span')
     messageElement.classList.add('script-chat-owner-message')
     messageElement.innerText = message
@@ -46,7 +46,7 @@ export class ScriptedChatJS extends ScriptedChatState {
     this.stepsContainter?.appendChild(messageElement)
   }
 
-  renderUserMessage(message: string) {
+  #renderUserMessage(message: string) {
     const messageElement = document.createElement('span')
     messageElement.classList.add('script-chat-user-message')
     messageElement.innerText = message
@@ -77,21 +77,21 @@ export class ScriptedChatJS extends ScriptedChatState {
     return ['text', 'email', 'number', 'date', 'datetime-local'].includes(input)
   }
 
-  getUserValues = () => {
+  #getUserValues = () => {
     if (this.#isTextField()) {
       return [this.textFieldElement?.value]
     }
     return []
   }
 
-  handleNextStep = async () => {
-    const values = this.getUserValues()
+  #handleNextStep = async () => {
+    const values = this.#getUserValues()
     await this.goToNextStep(values)
   }
 
   init() {
     const message = this.replaceMessageValuesVariables(this.currentStep.message)
-    this.renderOwnerMessage(message)
+    this.#renderOwnerMessage(message)
     const currentType = this.currentStep.input
     if (this.#isTextField()) {
       this.#showControl()
@@ -100,7 +100,7 @@ export class ScriptedChatJS extends ScriptedChatState {
 
     this.nextStepButtonElement?.addEventListener('click', (event) => {
       event.preventDefault()
-      this.handleNextStep()
+      this.#handleNextStep()
     })
   }
 }

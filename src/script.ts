@@ -25,7 +25,7 @@ export class ScriptedChatState {
     return this.getStep(this.currentStep.next)
   }
 
-  setStep(id: string) {
+  protected setStep(id: string) {
     const step = this.getStep(id)
     this.currentStep = step
     return step
@@ -42,7 +42,7 @@ export class ScriptedChatState {
     return _message
   }
 
-  goToNextStep = async (currentStepValues: any[]) => {
+  protected goToNextStep = async (currentStepValues: any[]) => {
     const result = {
       step: this.currentStep.id,
       values: currentStepValues,
