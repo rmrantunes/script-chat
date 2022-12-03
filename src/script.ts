@@ -42,7 +42,7 @@ export class ScriptState {
     return _message
   }
 
-  goToNextStep = async (values: any) => {
+  goToNextStep = async (values: any[]) => {
     const result = {
       step: this.currentStep.id,
       values,
@@ -66,12 +66,12 @@ export class ScriptState {
     if (!validation || !values.length) return
 
     this.results.push(result)
-    // this.renderUserMessage(values.join(', '))
+    this.config.onNewUserMessage?.(values)
     const currentAfterStepChange = this.currentStep.afterStepChange
     this.setStep(this.currentStep.next)
 
     const message = this.#replaceMessageValuesVariables(nextStep.message)
-    // this.renderOwnerMessage(message)
+    this.config.onNewOwnerMessage?.(message)
 
     const isEndStep = nextStep.id === 'end'
 

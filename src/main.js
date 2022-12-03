@@ -1,6 +1,8 @@
+'use strict'
 import { ScriptChat } from './index.js'
+import { ScriptState } from './script.js'
 
-const scriptChat = new ScriptChat({
+const scriptChat = new ScriptState({
   beforeStepChange: (input) => {
     console.log('before', input)
 
@@ -43,5 +45,6 @@ const scriptChat = new ScriptChat({
   ],
 })
 
-console.log('hello')
-scriptChat.init()
+console.log(scriptChat)
+scriptChat.goToNextStep(['Test qweui'])
+console.log(scriptChat)

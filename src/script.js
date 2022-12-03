@@ -17,7 +17,7 @@ export class ScriptState {
     constructor(config) {
         _ScriptState_instances.add(this);
         this.goToNextStep = (values) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             const result = {
                 step: this.currentStep.id,
                 values,
@@ -37,18 +37,18 @@ export class ScriptState {
             if (!validation || !values.length)
                 return;
             this.results.push(result);
-            // this.renderUserMessage(values.join(', '))
+            (_b = (_a = this.config).onNewUserMessage) === null || _b === void 0 ? void 0 : _b.call(_a, values);
             const currentAfterStepChange = this.currentStep.afterStepChange;
             this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptState_instances, "m", _ScriptState_replaceMessageValuesVariables).call(this, nextStep.message);
-            // this.renderOwnerMessage(message)
+            (_d = (_c = this.config).onNewOwnerMessage) === null || _d === void 0 ? void 0 : _d.call(_c, message);
             const isEndStep = nextStep.id === 'end';
             if (isEndStep) {
                 // remove all options inputs and button
-                (_b = (_a = this.config).onEnd) === null || _b === void 0 ? void 0 : _b.call(_a);
+                (_f = (_e = this.config).onEnd) === null || _f === void 0 ? void 0 : _f.call(_e);
             }
             else {
-                (_d = (_c = this.config).onContinue) === null || _d === void 0 ? void 0 : _d.call(_c, nextStep);
+                (_h = (_g = this.config).onContinue) === null || _h === void 0 ? void 0 : _h.call(_g, nextStep);
             }
             const afterStepChangeEvent = {
                 result,
@@ -56,7 +56,7 @@ export class ScriptState {
                 currentStep: nextStep,
                 nextStep: isEndStep ? null : this.getStep(nextStep.next),
             };
-            yield ((_f = (_e = this.config).afterStepChange) === null || _f === void 0 ? void 0 : _f.call(_e, afterStepChangeEvent));
+            yield ((_k = (_j = this.config).afterStepChange) === null || _k === void 0 ? void 0 : _k.call(_j, afterStepChangeEvent));
             yield (currentAfterStepChange === null || currentAfterStepChange === void 0 ? void 0 : currentAfterStepChange(afterStepChangeEvent));
         });
         this.script = config.script;
