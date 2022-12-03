@@ -1,12 +1,12 @@
-import { Result, ScriptStateConfig, Step } from './types'
+import { Result, ScriptedChatStateConfig, Step } from './types'
 
-export class ScriptState {
+export class ScriptedChatState {
   currentStep: Step
   script: Step[]
   results: Result[]
-  config: ScriptStateConfig
+  config: ScriptedChatStateConfig
 
-  constructor(config: ScriptStateConfig) {
+  constructor(config: ScriptedChatStateConfig) {
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
     this.results = []
@@ -31,7 +31,7 @@ export class ScriptState {
     return step
   }
 
-  #replaceMessageValuesVariables(message: string) {
+  replaceMessageValuesVariables(message: string) {
     let _message = message
     // Next implementation: {{start.2}} for multiple choice variables
     this.results.forEach((result) => {
@@ -42,10 +42,10 @@ export class ScriptState {
     return _message
   }
 
-  goToNextStep = async (values: any[]) => {
+  goToNextStep = async (currentStepValues: any[]) => {
     const result = {
       step: this.currentStep.id,
-      values,
+      values: currentStepValues,
     }
     const nextStep = this.getNextStep()
 
@@ -63,14 +63,14 @@ export class ScriptState {
       validation = await hook!(beforeStepChangeEvent)
     }
 
-    if (!validation || !values.length) return
+    if (!validation || !currentStepValues.length) return
 
     this.results.push(result)
-    this.config.onNewUserMessage?.(values)
+    this.config.onNewUserMessage?.(currentStepValues)
     const currentAfterStepChange = this.currentStep.afterStepChange
     this.setStep(this.currentStep.next)
 
-    const message = this.#replaceMessageValuesVariables(nextStep.message)
+    const message = this.replaceMessageValuesVariables(nextStep.message)
     this.config.onNewOwnerMessage?.(message)
 
     const isEndStep = nextStep.id === 'end'

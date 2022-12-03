@@ -7,20 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _ScriptState_instances, _ScriptState_replaceMessageValuesVariables;
-export class ScriptState {
+export class ScriptedChatState {
     constructor(config) {
-        _ScriptState_instances.add(this);
-        this.goToNextStep = (values) => __awaiter(this, void 0, void 0, function* () {
+        this.goToNextStep = (currentStepValues) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
             const result = {
                 step: this.currentStep.id,
-                values,
+                values: currentStepValues,
             };
             const nextStep = this.getNextStep();
             let validation = true;
@@ -34,13 +27,13 @@ export class ScriptState {
                 const hook = this.currentStep.beforeStepChange || this.config.beforeStepChange;
                 validation = yield hook(beforeStepChangeEvent);
             }
-            if (!validation || !values.length)
+            if (!validation || !currentStepValues.length)
                 return;
             this.results.push(result);
-            (_b = (_a = this.config).onNewUserMessage) === null || _b === void 0 ? void 0 : _b.call(_a, values);
+            (_b = (_a = this.config).onNewUserMessage) === null || _b === void 0 ? void 0 : _b.call(_a, currentStepValues);
             const currentAfterStepChange = this.currentStep.afterStepChange;
             this.setStep(this.currentStep.next);
-            const message = __classPrivateFieldGet(this, _ScriptState_instances, "m", _ScriptState_replaceMessageValuesVariables).call(this, nextStep.message);
+            const message = this.replaceMessageValuesVariables(nextStep.message);
             (_d = (_c = this.config).onNewOwnerMessage) === null || _d === void 0 ? void 0 : _d.call(_c, message);
             const isEndStep = nextStep.id === 'end';
             if (isEndStep) {
@@ -79,13 +72,13 @@ export class ScriptState {
         this.currentStep = step;
         return step;
     }
+    replaceMessageValuesVariables(message) {
+        let _message = message;
+        // Next implementation: {{start.2}} for multiple choice variables
+        this.results.forEach((result) => {
+            const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g');
+            _message = _message.replace(regex, result.values.join(', '));
+        });
+        return _message;
+    }
 }
-_ScriptState_instances = new WeakSet(), _ScriptState_replaceMessageValuesVariables = function _ScriptState_replaceMessageValuesVariables(message) {
-    let _message = message;
-    // Next implementation: {{start.2}} for multiple choice variables
-    this.results.forEach((result) => {
-        const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g');
-        _message = _message.replace(regex, result.values.join(', '));
-    });
-    return _message;
-};

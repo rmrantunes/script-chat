@@ -34,7 +34,7 @@ export type Result = {
   values: (string | undefined)[]
 }
 
-export type ScriptChatConfig = {
+export type ScriptedChatJSConfig = {
   script: Step[]
 
   /**
@@ -47,7 +47,7 @@ export type ScriptChatConfig = {
   parentElement?: Element
 }
 
-export type ScriptStateConfig = {
+export type ScriptedChatStateConfig = {
   script: Step[]
 
   onNewOwnerMessage?: (message: string) => void
