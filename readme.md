@@ -141,3 +141,8 @@ type Result = {
   values: (string | undefined)[]
 }
 ```
+
+- `currentStep`: current step object
+- `nextStep`: next step object
+- `result`: current step user input result
+- `results`: an array containing previous results
