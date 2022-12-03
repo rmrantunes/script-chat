@@ -37,14 +37,15 @@ export class ScriptChat {
             this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
             this.renderOwnerMessage(message);
-            if (nextStep.id === 'end') {
+            const isEndStep = nextStep.id === 'end';
+            if (isEndStep) {
                 // remove all options inputs and button
                 this.hideTextField();
             }
             (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, {
                 result,
                 currentStep: nextStep,
-                nextStep: this.getStep(nextStep.next),
+                nextStep: isEndStep ? null : this.getStep(nextStep.next),
             });
         };
         this.containter = document.querySelector('#script-chat-container');

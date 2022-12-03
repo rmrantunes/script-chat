@@ -4,7 +4,7 @@ type TextFieldTypes = 'text' | 'email' | 'number'
 
 type HookEvent = {
   currentStep: Step
-  nextStep: Step
+  nextStep: Step | null
 
   result: Value
 }
@@ -146,7 +146,9 @@ export class ScriptChat {
     const message = this.#replaceMessageValuesVariables(nextStep.message)
     this.renderOwnerMessage(message)
 
-    if (nextStep.id === 'end') {
+    const isEndStep = nextStep.id === 'end'
+
+    if (isEndStep) {
       // remove all options inputs and button
       this.hideTextField()
     }
@@ -154,7 +156,7 @@ export class ScriptChat {
     this.config.afterStepChange?.({
       result,
       currentStep: nextStep,
-      nextStep: this.getStep(nextStep.next),
+      nextStep: isEndStep ? null : this.getStep(nextStep.next),
     })
   }
 
