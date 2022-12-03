@@ -1,14 +1,13 @@
 {
   "name": "scripted-chat",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "A simple code for defining scripted chat using Javascript",
+  "main": "dist/script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rafael Antunes",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.10",
