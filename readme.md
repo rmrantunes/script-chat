@@ -5,13 +5,13 @@ A simple code for defining scripted chat using Javascript
 ## Installation
 
 ```
-yarn add script-chat
+yarn add scripted-chat
 ```
 
 or
 
 ```
-npm i script-chat
+npm i scripted-chat
 ```
 
 ## Step
