@@ -1,4 +1,4 @@
-export type StepName = 'start' | 'end'
+export type StepName = 'start' | 'end' | 'datetime-local'
 
 export type TextFieldTypes =
   | 'text'
