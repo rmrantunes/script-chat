@@ -47,6 +47,7 @@ export class ScriptChat {
   stepsContainter: Element | null
   textFieldElement: HTMLInputElement | null
   nextStepButtonElement: Element | null
+  controlElement: HTMLDivElement | null
   currentStep: Step
   script: Step[]
   results: Result[]
@@ -63,6 +64,7 @@ export class ScriptChat {
     this.nextStepButtonElement = this.containter.querySelector(
       '#script-chat-next-step-button'
     )
+    this.controlElement = this.containter.querySelector('.script-chat-control')
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
     this.results = []
@@ -103,13 +105,21 @@ export class ScriptChat {
     this.stepsContainter?.appendChild(messageElement)
   }
 
-  showTextField(type: TextFieldTypes = 'text') {
+  #hideControl() {
+    this.controlElement?.classList.add('hidden')
+  }
+
+  #showControl() {
+    this.controlElement?.classList.remove('hidden')
+  }
+
+  #showTextField(type: TextFieldTypes = 'text') {
     this.textFieldElement?.setAttribute('type', type)
     this.textFieldElement?.setAttribute('aria-hidden', 'false')
     this.textFieldElement?.removeAttribute('disabled')
   }
 
-  hideTextField() {
+  #hideTextField() {
     this.textFieldElement?.setAttribute('aria-hidden', 'true')
     this.textFieldElement?.setAttribute('disabled', 'true')
   }
@@ -172,9 +182,10 @@ export class ScriptChat {
 
     if (isEndStep) {
       // remove all options inputs and button
-      this.hideTextField()
+      this.#hideControl()
+      this.#hideTextField()
     } else {
-      this.#isTextField(nextStep.input) && this.showTextField(nextStep.input)
+      this.#isTextField(nextStep.input) && this.#showTextField(nextStep.input)
     }
 
     const afterStepChangeEvent = {
@@ -195,7 +206,8 @@ export class ScriptChat {
     this.renderOwnerMessage(message)
     const currentType = this.currentStep.input
     if (this.#isTextField()) {
-      this.showTextField(currentType)
+      this.#showControl()
+      this.#showTextField(currentType)
     }
 
     this.nextStepButtonElement?.addEventListener('click', (event) => {

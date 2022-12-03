@@ -12,7 +12,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _ScriptChat_instances, _ScriptChat_isTextField, _ScriptChat_replaceMessageValuesVariables;
+var _ScriptChat_instances, _ScriptChat_hideControl, _ScriptChat_showControl, _ScriptChat_showTextField, _ScriptChat_hideTextField, _ScriptChat_isTextField, _ScriptChat_replaceMessageValuesVariables;
 export class ScriptChat {
     constructor(config) {
         _ScriptChat_instances.add(this);
@@ -53,10 +53,11 @@ export class ScriptChat {
             const isEndStep = nextStep.id === 'end';
             if (isEndStep) {
                 // remove all options inputs and button
-                this.hideTextField();
+                __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_hideControl).call(this);
+                __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_hideTextField).call(this);
             }
             else {
-                __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this, nextStep.input) && this.showTextField(nextStep.input);
+                __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this, nextStep.input) && __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_showTextField).call(this, nextStep.input);
             }
             const afterStepChangeEvent = {
                 result,
@@ -71,6 +72,7 @@ export class ScriptChat {
         this.stepsContainter = this.containter.querySelector('#script-chat-messages-container');
         this.textFieldElement = this.containter.querySelector('#script-chat-textfield');
         this.nextStepButtonElement = this.containter.querySelector('#script-chat-next-step-button');
+        this.controlElement = this.containter.querySelector('.script-chat-control');
         this.script = config.script;
         this.currentStep = this.getStep('start') || this.script[0];
         this.results = [];
@@ -105,24 +107,14 @@ export class ScriptChat {
         messageElement.innerText = message;
         (_a = this.stepsContainter) === null || _a === void 0 ? void 0 : _a.appendChild(messageElement);
     }
-    showTextField(type = 'text') {
-        var _a, _b, _c;
-        (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('type', type);
-        (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('aria-hidden', 'false');
-        (_c = this.textFieldElement) === null || _c === void 0 ? void 0 : _c.removeAttribute('disabled');
-    }
-    hideTextField() {
-        var _a, _b;
-        (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-hidden', 'true');
-        (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('disabled', 'true');
-    }
     init() {
         var _a;
         const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, this.currentStep.message);
         this.renderOwnerMessage(message);
         const currentType = this.currentStep.input;
         if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
-            this.showTextField(currentType);
+            __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_showControl).call(this);
+            __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_showTextField).call(this, currentType);
         }
         (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', (event) => {
             event.preventDefault();
@@ -130,7 +122,22 @@ export class ScriptChat {
         });
     }
 }
-_ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField(input = this.currentStep.input) {
+_ScriptChat_instances = new WeakSet(), _ScriptChat_hideControl = function _ScriptChat_hideControl() {
+    var _a;
+    (_a = this.controlElement) === null || _a === void 0 ? void 0 : _a.classList.add('hidden');
+}, _ScriptChat_showControl = function _ScriptChat_showControl() {
+    var _a;
+    (_a = this.controlElement) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
+}, _ScriptChat_showTextField = function _ScriptChat_showTextField(type = 'text') {
+    var _a, _b, _c;
+    (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('type', type);
+    (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('aria-hidden', 'false');
+    (_c = this.textFieldElement) === null || _c === void 0 ? void 0 : _c.removeAttribute('disabled');
+}, _ScriptChat_hideTextField = function _ScriptChat_hideTextField() {
+    var _a, _b;
+    (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-hidden', 'true');
+    (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('disabled', 'true');
+}, _ScriptChat_isTextField = function _ScriptChat_isTextField(input = this.currentStep.input) {
     return ['text', 'email', 'number', 'date', 'datetime-local'].includes(input);
 }, _ScriptChat_replaceMessageValuesVariables = function _ScriptChat_replaceMessageValuesVariables(message) {
     let _message = message;
