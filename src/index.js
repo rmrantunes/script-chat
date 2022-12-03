@@ -7,19 +7,22 @@ var _ScriptChat_instances, _ScriptChat_isTextField;
 export class ScriptChat {
     constructor(config) {
         _ScriptChat_instances.add(this);
-        this.getUserValue = () => {
+        this.getUserValues = () => {
             var _a;
             if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
-                return (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value;
+                return [(_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value];
             }
+            return [];
         };
         this.handleNextStep = () => {
-            const value = this.getUserValue();
-            console.log(value);
-            if (!value)
+            const values = this.getUserValues();
+            if (!values.length)
                 return;
-            this.renderUserMessage(value);
-            // this.values[this.currentStep.id] = [value]
+            this.renderUserMessage(values.join(', '));
+            this.values.push({
+                step: this.currentStep.id,
+                stepValue: values,
+            });
             const nextStep = this.setStep(this.currentStep.next);
             this.renderOwnerMessage(nextStep.message);
             if (nextStep.id === 'end') {
@@ -64,13 +67,15 @@ export class ScriptChat {
         (_a = this.stepsContainter) === null || _a === void 0 ? void 0 : _a.appendChild(messageElement);
     }
     showTextField(type = 'text') {
-        var _a, _b;
+        var _a, _b, _c;
         (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('type', type);
         (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('aria-hidden', 'false');
+        (_c = this.textFieldElement) === null || _c === void 0 ? void 0 : _c.removeAttribute('disabled');
     }
     hideTextField() {
-        var _a;
+        var _a, _b;
         (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-hidden', 'true');
+        (_b = this.textFieldElement) === null || _b === void 0 ? void 0 : _b.setAttribute('disabled', 'true');
     }
     init() {
         var _a;

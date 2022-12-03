@@ -1,11 +1,11 @@
 type StepName = 'start' | 'end'
 
-type Input = 'text' | 'email'
+type TextFieldTypes = 'text' | 'email' | 'number'
 
 type Step = {
   id: StepName | string
   next: StepName | string
-  input: Input
+  input: TextFieldTypes
   message: string
 
   // TODO: pass a context as argument and return other context such as vairables
@@ -19,7 +19,7 @@ type ScriptChatConfig = {
 
 type Value = {
   step: string
-  values: string[]
+  stepValue: (string | undefined)[]
 }
 
 export class ScriptChat {
@@ -78,33 +78,38 @@ export class ScriptChat {
     this.stepsContainter?.appendChild(messageElement)
   }
 
-  showTextField(type: 'text' | 'email' = 'text') {
+  showTextField(type: TextFieldTypes = 'text') {
     this.textFieldElement?.setAttribute('type', type)
     this.textFieldElement?.setAttribute('aria-hidden', 'false')
+    this.textFieldElement?.removeAttribute('disabled')
   }
 
   hideTextField() {
     this.textFieldElement?.setAttribute('aria-hidden', 'true')
+    this.textFieldElement?.setAttribute('disabled', 'true')
   }
 
   #isTextField() {
     return ['text', 'email', 'number'].includes(this.currentStep.input)
   }
 
-  getUserValue = () => {
+  getUserValues = () => {
     if (this.#isTextField()) {
-      return this.textFieldElement?.value
+      return [this.textFieldElement?.value]
     }
+    return []
   }
 
   handleNextStep = () => {
-    const value = this.getUserValue()
-    console.log(value)
+    const values = this.getUserValues()
 
-    if (!value) return
+    if (!values.length) return
 
-    this.renderUserMessage(value)
-    // this.values[this.currentStep.id] = [value]
+    this.renderUserMessage(values.join(', '))
+    this.values.push({
+      step: this.currentStep.id,
+      stepValue: values,
+    })
 
     const nextStep = this.setStep(this.currentStep.next)
     this.renderOwnerMessage(nextStep.message)
