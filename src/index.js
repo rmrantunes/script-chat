@@ -19,7 +19,7 @@ export class ScriptChat {
             const values = this.getUserValues();
             const result = {
                 step: this.currentStep.id,
-                stepValues: values,
+                values,
             };
             const nextStep = this.getNextStep();
             let validation = true;
@@ -28,11 +28,12 @@ export class ScriptChat {
                     result,
                     currentStep: this.currentStep,
                     nextStep,
+                    results: this.results,
                 });
             }
             if (!validation || !values.length)
                 return;
-            this.values.push(result);
+            this.results.push(result);
             this.renderUserMessage(values.join(', '));
             this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
@@ -44,6 +45,7 @@ export class ScriptChat {
             }
             (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, {
                 result,
+                results: this.results,
                 currentStep: nextStep,
                 nextStep: isEndStep ? null : this.getStep(nextStep.next),
             });
@@ -54,7 +56,7 @@ export class ScriptChat {
         this.nextStepButtonElement = document.querySelector('#script-chat-next-step-button');
         this.script = config.script;
         this.currentStep = this.getStep('start') || this.script[0];
-        this.values = [];
+        this.results = [];
         this.config = config;
     }
     getStep(id) {
@@ -112,9 +114,9 @@ _ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _Scrip
     return ['text', 'email', 'number'].includes(this.currentStep.input);
 }, _ScriptChat_replaceMessageValuesVariables = function _ScriptChat_replaceMessageValuesVariables(message) {
     let _message = message;
-    this.values.forEach((value) => {
-        const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g');
-        _message = _message.replace(regex, value.stepValues.join(', '));
+    this.results.forEach((result) => {
+        const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g');
+        _message = _message.replace(regex, result.values.join(', '));
     });
     return _message;
 };

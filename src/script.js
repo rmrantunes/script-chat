@@ -2,7 +2,7 @@ import { ScriptChat } from './index.js'
 
 const scriptChat = new ScriptChat({
   beforeStepChange: (input) => {
-    console.log('before', input)
+    console.log('before', input.result)
 
     return true
   },

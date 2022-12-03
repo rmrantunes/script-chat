@@ -6,7 +6,8 @@ type HookEvent = {
   currentStep: Step
   nextStep: Step | null
 
-  result: Value
+  result: Result
+  results: Result[]
 }
 
 type Step = {
@@ -16,9 +17,9 @@ type Step = {
   message: string
 }
 
-type Value = {
+type Result = {
   step: string
-  stepValues: (string | undefined)[]
+  values: (string | undefined)[]
 }
 
 type ScriptChatConfig = {
@@ -35,7 +36,7 @@ export class ScriptChat {
   nextStepButtonElement: Element | null
   currentStep: Step
   script: Step[]
-  values: Value[]
+  results: Result[]
   config: ScriptChatConfig
 
   constructor(config: ScriptChatConfig) {
@@ -49,7 +50,7 @@ export class ScriptChat {
     )
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
-    this.values = []
+    this.results = []
     this.config = config
   }
 
@@ -104,9 +105,9 @@ export class ScriptChat {
 
   #replaceMessageValuesVariables(message: string) {
     let _message = message
-    this.values.forEach((value) => {
-      const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g')
-      _message = _message.replace(regex, value.stepValues.join(', '))
+    this.results.forEach((result) => {
+      const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g')
+      _message = _message.replace(regex, result.values.join(', '))
     })
 
     return _message
@@ -123,7 +124,7 @@ export class ScriptChat {
     const values = this.getUserValues()
     const result = {
       step: this.currentStep.id,
-      stepValues: values,
+      values,
     }
     const nextStep = this.getNextStep()
 
@@ -134,12 +135,13 @@ export class ScriptChat {
         result,
         currentStep: this.currentStep,
         nextStep,
+        results: this.results,
       })
     }
 
     if (!validation || !values.length) return
 
-    this.values.push(result)
+    this.results.push(result)
     this.renderUserMessage(values.join(', '))
     this.setStep(this.currentStep.next)
 
@@ -155,6 +157,7 @@ export class ScriptChat {
 
     this.config.afterStepChange?.({
       result,
+      results: this.results,
       currentStep: nextStep,
       nextStep: isEndStep ? null : this.getStep(nextStep.next),
     })
