@@ -92,4 +92,9 @@ export class ScriptedChatState {
     await this.config.afterStepChange?.(afterStepChangeEvent)
     await currentAfterStepChange?.(afterStepChangeEvent)
   }
+
+  reset() {
+    this.currentStep = this.getStep('start')
+    this.results = []
+  }
 }

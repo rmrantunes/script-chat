@@ -10,4 +10,5 @@ export declare class ScriptedChatState {
     protected setStep(id: string): Step;
     replaceMessageValuesVariables(message: string): string;
     protected goToNextStep: (currentStepValues: any[]) => Promise<void>;
+    reset(): void;
 }
