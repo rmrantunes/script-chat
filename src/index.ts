@@ -2,24 +2,28 @@ type StepName = 'start' | 'end'
 
 type TextFieldTypes = 'text' | 'email' | 'number'
 
+type HookEvent = Value & {
+  currentStep: Step
+  nextStep: Step
+}
+
 type Step = {
   id: StepName | string
   next: StepName | string
   input: TextFieldTypes
   message: string
-
-  // TODO: pass a context as argument and return other context such as vairables
-  afterStepChange?: () => any
-  beforeStepChange?: () => any
 }
 
 type Value = {
   step: string
-  stepValue: (string | undefined)[]
+  stepValues: (string | undefined)[]
 }
 
 type ScriptChatConfig = {
   script: Step[]
+
+  beforeStepChange?: (event: HookEvent) => boolean
+  afterStepChange?: (event: HookEvent) => void
 }
 
 export class ScriptChat {
@@ -30,6 +34,7 @@ export class ScriptChat {
   currentStep: Step
   script: Step[]
   values: Value[]
+  config: ScriptChatConfig
 
   constructor(config: ScriptChatConfig) {
     this.containter = document.querySelector('#script-chat-container')
@@ -43,10 +48,15 @@ export class ScriptChat {
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
     this.values = []
+    this.config = config
   }
 
   getStep(id: string) {
-    return this.script.find((step) => step.id === id)
+    const step = this.script.find((step) => step.id === id)
+    if (!step) {
+      throw new Error(`Script does not contain step '${id}'`)
+    }
+    return step
   }
 
   getNextStep() {
@@ -55,9 +65,6 @@ export class ScriptChat {
 
   setStep(id: string) {
     const step = this.getStep(id)
-    if (!step) {
-      throw new Error(`Script does not contain step '${id}'`)
-    }
     this.currentStep = step
     return step
   }
@@ -97,7 +104,7 @@ export class ScriptChat {
     let _message = message
     this.values.forEach((value) => {
       const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g')
-      _message = _message.replace(regex, value.stepValue.join(', '))
+      _message = _message.replace(regex, value.stepValues.join(', '))
     })
 
     return _message
@@ -112,17 +119,28 @@ export class ScriptChat {
 
   handleNextStep = () => {
     const values = this.getUserValues()
-
-    if (!values.length) return
-
-    this.values.push({
+    const newValues = {
       step: this.currentStep.id,
-      stepValue: values,
-    })
+      stepValues: values,
+    }
+    const nextStep = this.getNextStep()
 
+    let validation = true
+    const hookEvent = {
+      ...newValues,
+      currentStep: this.currentStep,
+      nextStep,
+    }
+
+    if (this.config.beforeStepChange) {
+      validation = this.config.beforeStepChange?.(hookEvent)
+    }
+
+    if (!validation || !values.length) return
+
+    this.values.push(newValues)
     this.renderUserMessage(values.join(', '))
-
-    const nextStep = this.setStep(this.currentStep.next)
+    this.setStep(this.currentStep.next)
 
     const message = this.#replaceMessageValuesVariables(nextStep.message)
     this.renderOwnerMessage(message)
@@ -131,6 +149,8 @@ export class ScriptChat {
       // remove all options inputs and button
       this.hideTextField()
     }
+
+    this.config.afterStepChange?.(hookEvent)
   }
 
   init() {

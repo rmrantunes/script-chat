@@ -1,6 +1,14 @@
 import { ScriptChat } from './index.js'
 
 const scriptChat = new ScriptChat({
+  beforeStepChange: (input) => {
+    console.log('before', input)
+
+    return true
+  },
+  afterStepChange: (input) => {
+    console.log('after', input)
+  },
   script: [
     {
       id: 'start',

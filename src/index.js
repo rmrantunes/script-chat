@@ -15,21 +15,30 @@ export class ScriptChat {
             return [];
         };
         this.handleNextStep = () => {
+            var _a, _b, _c, _d;
             const values = this.getUserValues();
-            if (!values.length)
-                return;
-            this.values.push({
+            const newValues = {
                 step: this.currentStep.id,
-                stepValue: values,
-            });
+                stepValues: values,
+            };
+            const nextStep = this.getNextStep();
+            let validation = true;
+            const hookEvent = Object.assign(Object.assign({}, newValues), { currentStep: this.currentStep, nextStep });
+            if (this.config.beforeStepChange) {
+                validation = (_b = (_a = this.config).beforeStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, hookEvent);
+            }
+            if (!validation || !values.length)
+                return;
+            this.values.push(newValues);
             this.renderUserMessage(values.join(', '));
-            const nextStep = this.setStep(this.currentStep.next);
+            this.setStep(this.currentStep.next);
             const message = __classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_replaceMessageValuesVariables).call(this, nextStep.message);
             this.renderOwnerMessage(message);
             if (nextStep.id === 'end') {
                 // remove all options inputs and button
                 this.hideTextField();
             }
+            (_d = (_c = this.config).afterStepChange) === null || _d === void 0 ? void 0 : _d.call(_c, hookEvent);
         };
         this.containter = document.querySelector('#script-chat-container');
         this.stepsContainter = document.querySelector('#script-chat-messages-container');
@@ -38,18 +47,20 @@ export class ScriptChat {
         this.script = config.script;
         this.currentStep = this.getStep('start') || this.script[0];
         this.values = [];
+        this.config = config;
     }
     getStep(id) {
-        return this.script.find((step) => step.id === id);
+        const step = this.script.find((step) => step.id === id);
+        if (!step) {
+            throw new Error(`Script does not contain step '${id}'`);
+        }
+        return step;
     }
     getNextStep() {
         return this.getStep(this.currentStep.next);
     }
     setStep(id) {
         const step = this.getStep(id);
-        if (!step) {
-            throw new Error(`Script does not contain step '${id}'`);
-        }
         this.currentStep = step;
         return step;
     }
@@ -95,7 +106,7 @@ _ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _Scrip
     let _message = message;
     this.values.forEach((value) => {
         const regex = new RegExp(`\\{\\{${value.step}\\}\\}`, 'g');
-        _message = _message.replace(regex, value.stepValue.join(', '));
+        _message = _message.replace(regex, value.stepValues.join(', '));
     });
     return _message;
 };
