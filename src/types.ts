@@ -46,3 +46,17 @@ export type ScriptChatConfig = {
 
   parentElement?: Element
 }
+
+export type ScriptStateConfig = {
+  script: Step[]
+
+  onEnd?: VoidFunction
+  onContinue?: (nextStep: Step) => void
+
+  /**
+   * - Use this hook to validade a user input. So you need to return a boolean.
+   * If there's no checking, just return `true`.
+   */
+  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
+  afterStepChange?: (event: HookEvent) => void | Promise<void>
+}
