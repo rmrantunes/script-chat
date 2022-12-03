@@ -67,10 +67,10 @@ export class ScriptChat {
             yield ((_b = (_a = this.config).afterStepChange) === null || _b === void 0 ? void 0 : _b.call(_a, afterStepChangeEvent));
             yield (currentAfterStepChange === null || currentAfterStepChange === void 0 ? void 0 : currentAfterStepChange(afterStepChangeEvent));
         });
-        this.containter = document.querySelector('#script-chat-container');
-        this.stepsContainter = document.querySelector('#script-chat-messages-container');
-        this.textFieldElement = document.querySelector('#script-chat-textfield');
-        this.nextStepButtonElement = document.querySelector('#script-chat-next-step-button');
+        this.containter = config.parentElement || document;
+        this.stepsContainter = this.containter.querySelector('#script-chat-messages-container');
+        this.textFieldElement = this.containter.querySelector('#script-chat-textfield');
+        this.nextStepButtonElement = this.containter.querySelector('#script-chat-next-step-button');
         this.script = config.script;
         this.currentStep = this.getStep('start') || this.script[0];
         this.results = [];
@@ -124,7 +124,10 @@ export class ScriptChat {
         if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
             this.showTextField(currentType);
         }
-        (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.handleNextStep);
+        (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.handleNextStep();
+        });
     }
 }
 _ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField(input = this.currentStep.input) {

@@ -38,10 +38,12 @@ type ScriptChatConfig = {
    */
   beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
   afterStepChange?: (event: HookEvent) => void | Promise<void>
+
+  parentElement?: Element
 }
 
 export class ScriptChat {
-  containter: Element | null
+  containter: Element | Document
   stepsContainter: Element | null
   textFieldElement: HTMLInputElement | null
   nextStepButtonElement: Element | null
@@ -51,12 +53,14 @@ export class ScriptChat {
   config: ScriptChatConfig
 
   constructor(config: ScriptChatConfig) {
-    this.containter = document.querySelector('#script-chat-container')
-    this.stepsContainter = document.querySelector(
+    this.containter = config.parentElement || document
+    this.stepsContainter = this.containter.querySelector(
       '#script-chat-messages-container'
     )
-    this.textFieldElement = document.querySelector('#script-chat-textfield')
-    this.nextStepButtonElement = document.querySelector(
+    this.textFieldElement = this.containter.querySelector(
+      '#script-chat-textfield'
+    )
+    this.nextStepButtonElement = this.containter.querySelector(
       '#script-chat-next-step-button'
     )
     this.script = config.script
@@ -194,6 +198,9 @@ export class ScriptChat {
       this.showTextField(currentType)
     }
 
-    this.nextStepButtonElement?.addEventListener('click', this.handleNextStep)
+    this.nextStepButtonElement?.addEventListener('click', (event) => {
+      event.preventDefault()
+      this.handleNextStep()
+    })
   }
 }

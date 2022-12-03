@@ -8,11 +8,17 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="script-chat-container">
-      <div id="script-chat-messages-container"></div>
-
-      <input type="text" id="script-chat-textfield" />
-      <button type="button" id="script-chat-next-step-button">Confirm</button>
+    <div>
+      <form class="script-chat">
+        <div class="script-chat-messages-container"></div>
+        <div class="script-chat-options-container"></div>
+        <div class="script-chat-control">
+          <input type="text" class="script-chat-textfield" />
+          <button type="submit" class="script-chat-next-step-button">
+            Confirm
+          </button>
+        </div>
+      </form>
     </div>
 
     <script src="./script.js" type="module"></script>
