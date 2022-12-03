@@ -1,10 +1,21 @@
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _ScriptChat_instances, _ScriptChat_isTextField;
 export class ScriptChat {
-    // values: Values
     constructor(config) {
-        this.handleNextStep = () => {
+        _ScriptChat_instances.add(this);
+        this.getUserValue = () => {
             var _a;
-            const value = (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value;
-            console.log(this.textFieldElement);
+            if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
+                return (_a = this.textFieldElement) === null || _a === void 0 ? void 0 : _a.value;
+            }
+        };
+        this.handleNextStep = () => {
+            const value = this.getUserValue();
+            console.log(value);
             if (!value)
                 return;
             this.renderUserMessage(value);
@@ -22,6 +33,7 @@ export class ScriptChat {
         this.nextStepButtonElement = document.querySelector('#script-chat-next-step-button');
         this.script = config.script;
         this.currentStep = this.getStep('start') || this.script[0];
+        this.values = [];
     }
     getStep(id) {
         return this.script.find((step) => step.id === id);
@@ -64,9 +76,12 @@ export class ScriptChat {
         var _a;
         this.renderOwnerMessage(this.currentStep.message);
         const currentType = this.currentStep.input;
-        if (currentType === 'email' || currentType === 'text') {
+        if (__classPrivateFieldGet(this, _ScriptChat_instances, "m", _ScriptChat_isTextField).call(this)) {
             this.showTextField(currentType);
         }
         (_a = this.nextStepButtonElement) === null || _a === void 0 ? void 0 : _a.addEventListener('click', this.handleNextStep);
     }
 }
+_ScriptChat_instances = new WeakSet(), _ScriptChat_isTextField = function _ScriptChat_isTextField() {
+    return ['text', 'email', 'number'].includes(this.currentStep.input);
+};

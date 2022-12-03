@@ -5,7 +5,7 @@ type Input = 'text' | 'email'
 type Step = {
   id: StepName | string
   next: StepName | string
-  input?: Input
+  input: Input
   message: string
 
   // TODO: pass a context as argument and return other context such as vairables
@@ -17,7 +17,10 @@ type ScriptChatConfig = {
   script: Step[]
 }
 
-type Values = Record<string, string[]>
+type Value = {
+  step: string
+  values: string[]
+}
 
 export class ScriptChat {
   containter: Element | null
@@ -26,7 +29,7 @@ export class ScriptChat {
   nextStepButtonElement: Element | null
   currentStep: Step
   script: Step[]
-  // values: Values
+  values: Value[]
 
   constructor(config: ScriptChatConfig) {
     this.containter = document.querySelector('#script-chat-container')
@@ -39,6 +42,7 @@ export class ScriptChat {
     )
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
+    this.values = []
   }
 
   getStep(id: string) {
@@ -83,10 +87,20 @@ export class ScriptChat {
     this.textFieldElement?.setAttribute('aria-hidden', 'true')
   }
 
-  handleNextStep = () => {
-    const value = this.textFieldElement?.value
+  #isTextField() {
+    return ['text', 'email', 'number'].includes(this.currentStep.input)
+  }
 
-    console.log(this.textFieldElement)
+  getUserValue = () => {
+    if (this.#isTextField()) {
+      return this.textFieldElement?.value
+    }
+  }
+
+  handleNextStep = () => {
+    const value = this.getUserValue()
+    console.log(value)
+
     if (!value) return
 
     this.renderUserMessage(value)
@@ -104,7 +118,7 @@ export class ScriptChat {
   init() {
     this.renderOwnerMessage(this.currentStep.message)
     const currentType = this.currentStep.input
-    if (currentType === 'email' || currentType === 'text') {
+    if (this.#isTextField()) {
       this.showTextField(currentType)
     }
 
