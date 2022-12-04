@@ -14,6 +14,9 @@ or
 npm i scripted-chat
 ```
 
+## Warning
+No stable version yet. You may face some breaking changes between versions in relatively small space of time.
+
 ## Get Started
 
 ```ts
