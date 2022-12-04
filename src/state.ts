@@ -39,10 +39,20 @@ export class ScriptedChatState {
 
   replaceMessageValuesVariables(message: string) {
     let _message = message
-    // Next implementation: {{start.2}} for multiple choice variables
+    // Next implementation: {{start}} for multiple choice variables
     this.results.forEach((result) => {
       const regex = getVariableRegex(result.step)
       _message = _message.replace(regex, result.values.join(', '))
+
+      /**
+       * Giving support to multiple options
+       * Access variables with indexes {{start.2}}
+       */
+      result.values.forEach((value, index) => {
+        if (!value) return
+        const regex = getVariableRegex(`${result.step}.${index}`)
+        _message = _message.replace(regex, value)
+      })
     })
 
     Object.entries(this.customVariables).forEach(([key, value]) => {
