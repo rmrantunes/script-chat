@@ -19,7 +19,7 @@ npm i scripted-chat
 ```ts
 import { ScriptedChatState } from 'scripted-chat'
 
-const scriptState = new ScriptedChatState(config)
+const scriptControls = new ScriptedChatState(config)
 ```
 
 Before moving on to the `config` object and the other `ScriptedChatState` methods, learn the basics of `Step` and `Script`.
@@ -80,12 +80,12 @@ const script = [
   /** steps */
 ]
 
-const scriptState = new ScriptedChatState({
+const scriptControls = new ScriptedChatState({
   script,
 })
 ```
 
-### Script state
+### Script Controls
 
 - `currentStep`: current step object
 - `script`: array of steps
