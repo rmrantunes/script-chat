@@ -94,6 +94,7 @@ const scriptState = new ScriptedChatState({
 - `getStep: (id: string) => Step`: get a certain step by id
 - `getNextStep: () => Step`: get the next step object
 - `setStep: (id: string) => Step`: set a new `currentStep`
+  - In current version, hooks do not work with this method yet
 - `reset:() => void`: reset `results` and `currentStep`
 - `validateAndProceed: (currentStepValues: any[]) => Promise<void>`: pass an array of values (user input) to proceed with your script
 
