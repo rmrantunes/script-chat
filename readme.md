@@ -15,7 +15,8 @@ npm i scripted-chat
 ```
 
 ## Warning
-No stable version yet. You may face some breaking changes between versions in relatively small space of time.
+
+No stable version yet. You may face some breaking changes between versions in a relatively small space of time.
 
 ## Get Started
 
@@ -104,6 +105,7 @@ const scriptControls = new ScriptedChatState({
 - `replaceMessageValuesVariables: (message: string) => string
 `: Already implemented inside `validateAndProceed`. Replace message variables with previous results values.
   (See more about variables in Advanced section)
+- `setCustomVariable: (key: string, value: string) => void`: set your custom variables throughout the process. (See more about variables in Advanced section)
 
 ## Advanced
 
