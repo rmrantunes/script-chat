@@ -97,9 +97,9 @@ const scriptState = new ScriptedChatState({
 - `reset:() => void`: reset `results` and `currentStep`
 - `goToNextStep: (currentStepValues: any[]) => Promise<void>`: pass an array of values (user input) to proceed with your script
 
-- `replaceMessageValuesVariables(message: string): string
-`: replace message variables with previous results values.
-  (See more about variables on Advanced section)
+- `replaceMessageValuesVariables: (message: string) => string
+`: Already implemented inside `goToNextStep`. Replace message variables with previous results values.
+  (See more about variables in Advanced section)
 
 ## Advanced
 
