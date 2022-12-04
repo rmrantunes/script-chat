@@ -42,7 +42,7 @@ export class ScriptedChatState {
     return _message
   }
 
-  protected goToNextStep = async (currentStepValues: any[]) => {
+  protected validateAndProceed = async (currentStepValues: any[]) => {
     const result = {
       step: this.currentStep.id,
       values: currentStepValues,

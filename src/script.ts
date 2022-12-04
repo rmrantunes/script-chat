@@ -86,7 +86,7 @@ export class ScriptedChatJS extends ScriptedChatState {
 
   #handleNextStep = async () => {
     const values = this.#getUserValues()
-    await this.goToNextStep(values)
+    await this.validateAndProceed(values)
   }
 
   #nextStepButtonHandler = (event: Event) => {
