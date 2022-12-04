@@ -1,9 +1,12 @@
 'use strict'
-import { ScriptedChatJS } from './index.js'
+import { ScriptedChatJS } from '../dist/script.js'
 // import { ScriptedChatState, ScriptedChatJS } from 'scripted-chat'
 // import { ScriptState } from './script.js'
 
 const scriptChat = new ScriptedChatJS({
+  customVariables: {
+    custom1: 'Custom hehe',
+  },
   beforeStepChange: (input) => {
     console.log('before', input)
 
@@ -39,11 +42,13 @@ const scriptChat = new ScriptedChatJS({
     },
     {
       id: 'end',
-      message: 'Good to know!',
+      message: 'Good to know!, {{custom1}}',
       next: '',
       input: 'text',
     },
   ],
 })
+
+console.log(scriptChat)
 
 scriptChat.init()

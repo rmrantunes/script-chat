@@ -34,9 +34,11 @@ export type Result = {
   values: (string | undefined)[]
 }
 
+export type Variables = Record<string, string>
+
 export type ScriptedChatJSConfig = {
   script: Step[]
-
+  customVariables?: Variables
   /**
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
@@ -49,6 +51,7 @@ export type ScriptedChatJSConfig = {
 
 export type ScriptedChatStateConfig = {
   script: Step[]
+  customVariables?: Variables
 
   onNewStepMessage?: (message: string) => void
   onNewUserMessage?: (values: string[]) => void

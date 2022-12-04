@@ -1,16 +1,22 @@
-import { Result, ScriptedChatStateConfig, Step } from './types'
+import { Result, ScriptedChatStateConfig, Step, Variables } from './types'
+
+function getVariableRegex(variable: string) {
+  return new RegExp(`\\{\\{${variable}\\}\\}`, 'g')
+}
 
 export class ScriptedChatState {
   currentStep: Step
   script: Step[]
   results: Result[]
   config: ScriptedChatStateConfig
+  customVariables: Variables
 
   constructor(config: ScriptedChatStateConfig) {
     this.script = config.script
     this.currentStep = this.getStep('start') || this.script[0]
     this.results = []
     this.config = config
+    this.customVariables = this.config.customVariables || {}
   }
 
   getStep(id: string) {
@@ -35,8 +41,13 @@ export class ScriptedChatState {
     let _message = message
     // Next implementation: {{start.2}} for multiple choice variables
     this.results.forEach((result) => {
-      const regex = new RegExp(`\\{\\{${result.step}\\}\\}`, 'g')
+      const regex = getVariableRegex(result.step)
       _message = _message.replace(regex, result.values.join(', '))
+    })
+
+    Object.entries(this.customVariables).forEach(([key, value]) => {
+      const regex = getVariableRegex(key)
+      _message = _message.replace(regex, value)
     })
 
     return _message
@@ -96,5 +107,9 @@ export class ScriptedChatState {
   reset() {
     this.currentStep = this.getStep('start')
     this.results = []
+  }
+
+  setCustomVariable(key: string, value: string) {
+    this.customVariables[key] = value
   }
 }
