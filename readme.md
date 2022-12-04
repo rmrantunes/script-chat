@@ -133,7 +133,7 @@ const script = [
 
 ### Hooks
 
-#### `beforeStepChange`
+#### `beforeProceed: (event: HookEvent) => boolean | Promise<boolean>`
 
 Use this hook to validade a user input returning a boolean.
 If there's no checking, just return `true`.
@@ -151,7 +151,7 @@ const script = [
     message: "What's your name?",
     next: 'end',
     input: 'text',
-    beforeStepChange(event) {
+    beforeProceed(event) {
       const { values } = event.result
       return !!values[0]?.length
     },
@@ -165,7 +165,7 @@ const script = [
 ]
 ```
 
-#### `afterStepChange`
+#### `afterProceed: (event: HookEvent) => void | Promise<void>`
 
 You can't validate using this hook, but you still can keep track on step change.
 

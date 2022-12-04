@@ -13,12 +13,12 @@ export type Step = {
   input: TextFieldTypes
   message: string
 
-  /** Step-level `beforeStepChange` overrides the global one
+  /** Step-level `beforeProceed` overrides the global one
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
    */
-  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
-  afterStepChange?: (event: HookEvent) => void | Promise<void>
+  beforeProceed?: (event: HookEvent) => boolean | Promise<boolean>
+  afterProceed?: (event: HookEvent) => void | Promise<void>
 }
 
 export type HookEvent = {
@@ -43,8 +43,8 @@ export type ScriptedChatJSConfig = {
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
    */
-  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
-  afterStepChange?: (event: HookEvent) => void | Promise<void>
+  beforeProceed?: (event: HookEvent) => boolean | Promise<boolean>
+  afterProceed?: (event: HookEvent) => void | Promise<void>
 
   parentElement?: Element
 }
@@ -63,6 +63,6 @@ export type ScriptedChatStateConfig = {
    * - Use this hook to validade a user input. So you need to return a boolean.
    * If there's no checking, just return `true`.
    */
-  beforeStepChange?: (event: HookEvent) => boolean | Promise<boolean>
-  afterStepChange?: (event: HookEvent) => void | Promise<void>
+  beforeProceed?: (event: HookEvent) => boolean | Promise<boolean>
+  afterProceed?: (event: HookEvent) => void | Promise<void>
 }

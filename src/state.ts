@@ -62,23 +62,22 @@ export class ScriptedChatState {
 
     let validation = true
 
-    if (this.currentStep.beforeStepChange || this.config.beforeStepChange) {
-      const beforeStepChangeEvent = {
+    if (this.currentStep.beforeProceed || this.config.beforeProceed) {
+      const beforeProceedEvent = {
         result,
         currentStep: this.currentStep,
         nextStep,
         results: this.results,
       }
-      const hook =
-        this.currentStep.beforeStepChange || this.config.beforeStepChange
-      validation = await hook!(beforeStepChangeEvent)
+      const hook = this.currentStep.beforeProceed || this.config.beforeProceed
+      validation = await hook!(beforeProceedEvent)
     }
 
     if (!validation || !currentStepValues.length) return
 
     this.results.push(result)
     this.config.onNewUserMessage?.(currentStepValues)
-    const currentAfterStepChange = this.currentStep.afterStepChange
+    const currentAfterProceed = this.currentStep.afterProceed
     this.setStep(this.currentStep.next)
 
     const message = this.replaceMessageValuesVariables(nextStep.message)
@@ -93,15 +92,15 @@ export class ScriptedChatState {
       this.config.onContinue?.(nextStep)
     }
 
-    const afterStepChangeEvent = {
+    const afterProceedEvent = {
       result,
       results: this.results,
       currentStep: nextStep,
       nextStep: isEndStep ? null : this.getStep(nextStep.next),
     }
 
-    await this.config.afterStepChange?.(afterStepChangeEvent)
-    await currentAfterStepChange?.(afterStepChangeEvent)
+    await this.config.afterProceed?.(afterProceedEvent)
+    await currentAfterProceed?.(afterProceedEvent)
   }
 
   reset() {
